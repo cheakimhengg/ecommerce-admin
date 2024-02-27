@@ -49,7 +49,7 @@ export async function POST(
     });
     return NextResponse.json(color);
   } catch (error) {
-    console.log("[COLORS_POST", error);
+    console.log("[COLORS_POST]", error);
     return new NextResponse("Interal error", { status: 500 });
   }
 }
@@ -70,7 +70,7 @@ export async function GET(
     });
     return NextResponse.json(color);
   } catch (error) {
-    console.log("[COLORS_POST", error);
+    console.log("[COLORS_GET]", error);
     return new NextResponse("Interal error", { status: 500 });
   }
 }
