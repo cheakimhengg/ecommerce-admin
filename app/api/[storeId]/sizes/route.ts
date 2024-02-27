@@ -49,7 +49,7 @@ export async function POST(
     });
     return NextResponse.json(size);
   } catch (error) {
-    console.log("[SIZES_POST", error);
+    console.log("[SIZES_POST]", error);
     return new NextResponse("Interal error", { status: 500 });
   }
 }
@@ -70,7 +70,7 @@ export async function GET(
     });
     return NextResponse.json(sizes);
   } catch (error) {
-    console.log("[SIZES_POST", error);
+    console.log("[SIZES_GET]", error);
     return new NextResponse("Interal error", { status: 500 });
   }
 }
