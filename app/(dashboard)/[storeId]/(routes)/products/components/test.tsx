@@ -15,6 +15,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { ProductColumn } from "./columns";
 
 interface CellActionProps {
@@ -43,7 +44,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Copied to clipboard.");
+    toast.success("Product ID copied to clipboard.");
   };
 
   return (
