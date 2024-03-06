@@ -2,19 +2,16 @@
 
 import * as z from "zod";
 import axios from "axios";
-
-import { Category, Color, Image, Product, Size } from "@prisma/client";
-import { Trash } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import toast from "react-hot-toast";
-
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { Trash } from "lucide-react";
+import { Category, Color, Image, Product, Size } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
-import { Heading } from "@/components/ui/heading";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormControl,
@@ -24,16 +21,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
-import ImageUpload from "@/components/ui/image-upload";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
+import ImageUpload from "@/components/ui/image-upload";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const formSchema = z.object({
@@ -63,8 +61,8 @@ interface ProductFormProps {
 export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
   categories,
-  colors,
   sizes,
+  colors,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -77,23 +75,25 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const toastMessage = initialData ? "Product updated." : "Product created.";
   const action = initialData ? "Save changes" : "Create";
 
+  const defaultValues = initialData
+    ? {
+        ...initialData,
+        price: parseFloat(String(initialData?.price)),
+      }
+    : {
+        name: "",
+        images: [],
+        price: 0,
+        categoryId: "",
+        colorId: "",
+        sizeId: "",
+        isFeatured: false,
+        isArchived: false,
+      };
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData
-      ? {
-          ...initialData,
-          price: parseFloat(String(initialData?.price)),
-        }
-      : {
-          name: "",
-          images: [],
-          price: 0,
-          categoryId: "",
-          colorId: "",
-          sizeId: "",
-          isFeatured: false,
-          isArchived: false,
-        },
+    defaultValues,
   });
 
   const onSubmit = async (data: ProductFormValues) => {
@@ -107,10 +107,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       } else {
         await axios.post(`/api/${params.storeId}/products`, data);
       }
-      router.push(`/${params.storeId}/products`);
       router.refresh();
+      router.push(`/${params.storeId}/products`);
       toast.success(toastMessage);
-    } catch (error) {
+    } catch (error: any) {
       toast.error("Something went wrong.");
     } finally {
       setLoading(false);
@@ -121,11 +121,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     try {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
-
-      router.push(`/${params.storeId}/products`);
       router.refresh();
+      router.push(`/${params.storeId}/products`);
       toast.success("Product deleted.");
-    } catch (error) {
+    } catch (error: any) {
       toast.error("Something went wrong.");
     } finally {
       setLoading(false);
@@ -168,8 +167,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <FormLabel>Images</FormLabel>
                 <FormControl>
                   <ImageUpload
-                    disabled={loading}
                     value={field.value.map((image) => image.url)}
+                    disabled={loading}
                     onChange={(url) =>
                       field.onChange([...field.value, { url }])
                     }
@@ -184,7 +183,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               </FormItem>
             )}
           />
-          <div className="grid grid-cols-3 gap-8">
+          <div className="md:grid md:grid-cols-3 gap-8">
             <FormField
               control={form.control}
               name="name"
@@ -350,7 +349,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <div className="space-y-1 leading-none">
                     <FormLabel>Archived</FormLabel>
                     <FormDescription>
-                      This product will not appear anywhere in the store
+                      This product will not appear anywhere in the store.
                     </FormDescription>
                   </div>
                 </FormItem>
@@ -365,5 +364,3 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     </>
   );
 };
-
-export default ProductForm;

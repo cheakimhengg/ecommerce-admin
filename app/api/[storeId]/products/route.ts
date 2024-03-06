@@ -9,6 +9,7 @@ export async function POST(
 ) {
   try {
     const { userId } = auth();
+
     const body = await req.json();
 
     const {
@@ -23,7 +24,7 @@ export async function POST(
     } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated", { status: 403 });
     }
 
     if (!name) {
@@ -42,12 +43,12 @@ export async function POST(
       return new NextResponse("Category Id is required", { status: 400 });
     }
 
-    if (!sizeId) {
-      return new NextResponse("Size Id is required", { status: 400 });
-    }
-
     if (!colorId) {
       return new NextResponse("Color Id is required", { status: 400 });
+    }
+
+    if (!sizeId) {
+      return new NextResponse("Size Id is required", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -62,7 +63,7 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 403 });
+      return new NextResponse("Unauthorized", { status: 405 });
     }
 
     const product = await prismadb.product.create({
@@ -74,18 +75,18 @@ export async function POST(
         categoryId,
         colorId,
         sizeId,
+        storeId: params.storeId,
         images: {
           createMany: {
-            data: [...images.map((image: string) => image)],
+            data: [...images.map((image: { url: string }) => image)],
           },
         },
-        storeId: params.storeId,
       },
     });
     return NextResponse.json(product);
   } catch (error) {
     console.log("[PRODUCTS_POST]", error);
-    return new NextResponse("Interal error", { status: 500 });
+    return new NextResponse("Internal error", { status: 500 });
   }
 }
 
@@ -126,6 +127,6 @@ export async function GET(
     return NextResponse.json(products);
   } catch (error) {
     console.log("[PRODUCTS_GET]", error);
-    return new NextResponse("Interal error", { status: 500 });
+    return new NextResponse("Internal error", { status: 500 });
   }
 }

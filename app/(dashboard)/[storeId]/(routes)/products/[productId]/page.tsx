@@ -1,13 +1,16 @@
 import prismadb from "@/lib/prismadb";
-import ProductForm from "./components/product-form";
 
-const ProductsPage = async ({
+import { ProductForm } from "./components/product-form";
+
+const ProductPage = async ({
   params,
 }: {
   params: { productId: string; storeId: string };
 }) => {
   const product = await prismadb.product.findUnique({
-    where: { id: params.productId },
+    where: {
+      id: params.productId,
+    },
     include: {
       images: true,
     },
@@ -33,7 +36,7 @@ const ProductsPage = async ({
 
   return (
     <div className="flex-col">
-      <div className="flex-1 space-y-4 p-8 pt-6 ">
+      <div className="flex-1 space-y-4 p-8 pt-6">
         <ProductForm
           categories={categories}
           colors={colors}
@@ -45,4 +48,4 @@ const ProductsPage = async ({
   );
 };
 
-export default ProductsPage;
+export default ProductPage;
