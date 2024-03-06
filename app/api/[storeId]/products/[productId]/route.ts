@@ -76,6 +76,7 @@ export async function PATCH(
 ) {
   try {
     const { userId } = auth();
+
     const body = await req.json();
 
     const {
@@ -112,10 +113,10 @@ export async function PATCH(
     if (!categoryId) {
       return new NextResponse("Category Id is required", { status: 400 });
     }
-
     if (!colorId) {
       return new NextResponse("Color Id is required", { status: 400 });
     }
+
     if (!sizeId) {
       return new NextResponse("Size Id is required", { status: 400 });
     }
